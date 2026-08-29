@@ -6,11 +6,12 @@ from datetime import datetime
 app = FastAPI()
 ARQUIVO = "documentos.json"
 
+USUARIO = "admin"
+SENHA = "medico2026"
+
 LOGO_URL = "https://i.postimg.cc/NMr6VDft/logo-png.jpg"
 NOME_CLINICA = "UPA 24 HORAS - SENADOR CAMARÁ"
 ENDERECO = "Av. de Santa Cruz, 6.486 - Senador Camará, Rio de Janeiro - RJ, 21830-264"
-USUARIO = "admin"
-SENHA = "medico2026"
 
 def carregar():
     if os.path.exists(ARQUIVO):
@@ -30,38 +31,47 @@ async def validar(doc: str = ""):
     info = docs.get(codigo)
     if not info:
         return f"<html><body style='font-family:Arial;background:#f4f6f9;display:flex;justify-content:center;align-items:center;height:100vh;margin:0'><div style='background:white;padding:40px;border-radius:12px;text-align:center'><h2 style='color:#c62828'>Documento Não Encontrado</h2><p>Código <b>{doc}</b> não consta.</p></div></body></html>"
-
     hash_valid = hashlib.md5(f"{codigo}{info.get('cpf','')}{info.get('data','')}".encode()).hexdigest().upper()[:16]
-
     return f"""
-    <html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Validação - {codigo}</title>
+    <html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>Validação - {codigo}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        *{{font-family:'Inter',Arial}} body{{margin:0;background:#eef2f7}}
-    .page{{max-width:800px;margin:20px auto;background:white;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.12)}}
-    .header{{background:linear-gradient(135deg,#0f3554 0%,#163e6b 100%);color:white;padding:22px 30px;display:flex;justify-content:space-between;align-items:center}}
-    .header img{{max-height:52px;background:white;padding:6px 10px;border-radius:8px}}
-    .content{{padding:0 30px 30px}}
-    .status-box{{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin:20px 0}}
-    .grid{{display:grid;grid-template-columns:1fr 1fr;gap:0}}
-    .field{{padding:14px 0;border-bottom:1px solid #f0f0f0;display:flex;flex-direction:column}}
-    .field.full{{grid-column:1 / -1}}.field.l{{font-size:11px;color:#8a8a8a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}}.field.v{{font-size:14px;font-weight:600;color:#1a1a1a}}
-    .section-title{{font-size:13px;font-weight:700;color:#0f3554;text-transform:uppercase;letter-spacing:1px;margin:30px 0 10px;padding-left:12px;border-left:4px solid #0f3554}}
-    .qr-box{{background:#fafafa;border:1px dashed #ddd;border-radius:12px;padding:20px;text-align:center;margin-top:20px}}
-    .footer{{background:#f8f9fa;padding:20px 30px;font-size:11px;color:#888;border-top:1px solid #eee;text-align:center}}
-    .hash{{font-family:monospace;background:#eee;padding:4px 8px;border-radius:4px;font-size:12px}}
+        *{{font-family:'Inter',Arial;box-sizing:border-box}} body{{margin:0;background:#eef2f7}}
+       .page{{max-width:800px;margin:0 auto;background:white;min-height:100vh;box-shadow:0 10px 40px rgba(0,0,0,.12)}}
+        @media(min-width:801px){{.page{{margin:20px auto;border-radius:16px;overflow:hidden}}}}
+        /* HEADER CORRIGIDO PRO CELULAR */
+       .header{{background:linear-gradient(135deg,#0f3554 0%,#163e6b 100%);color:white;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px}}
+       .header-left{{display:flex;align-items:center;gap:12px;min-width:0;flex:1}}
+       .header-left img{{max-height:48px;min-width:48px;background:white;padding:6px;border-radius:8px;object-fit:contain}}
+       .header-text{{min-width:0}}.header-text.nome{{font-weight:700;font-size:14px;line-height:1.2;word-break:break-word}}.header-text.end{{font-size:10px;opacity:.85;margin-top:4px;line-height:1.3}}
+       .badge{{background:white;color:#0f3554;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0}}
+       .content{{padding:0 20px 30px}}
+       .status-box{{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin:18px 0;gap:10px}}
+       .grid{{display:grid;grid-template-columns:1fr 1fr;gap:0}}
+       .field{{padding:12px 0;border-bottom:1px solid #f0f0f0;display:flex;flex-direction:column}}
+       .field.full{{grid-column:1 / -1}}.field.l{{font-size:11px;color:#8a8a8a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}}.field.v{{font-size:14px;font-weight:600;color:#1a1a1a;word-break:break-word}}
+       .section-title{{font-size:13px;font-weight:700;color:#0f3554;text-transform:uppercase;letter-spacing:1px;margin:28px 0 8px;padding-left:10px;border-left:4px solid #0f3554}}
+       .qr-box{{background:#fafafa;border:1px dashed #ddd;border-radius:12px;padding:18px;text-align:center;margin-top:20px}}
+       .footer{{background:#f8f9fa;padding:16px 20px;font-size:10px;color:#888;border-top:1px solid #eee;text-align:center;line-height:1.4}}
+       .hash{{font-family:monospace;background:#eee;padding:4px 8px;border-radius:4px;font-size:12px;word-break:break-all}}
+        @media(max-width:600px){{
+           .header{{flex-wrap:wrap;padding:14px 16px}}
+           .header-left{{width:100%}}
+           .badge{{margin-left:60px}}
+           .grid{{grid-template-columns:1fr}}
+           .status-box{{flex-direction:column;align-items:flex-start}}
+        }}
     </style></head>
     <body><div class="page">
         <div class="header">
-            <div style="display:flex;align-items:center;gap:14px"><img src="{LOGO_URL}"><div><div style="font-weight:700;font-size:15px">{NOME_CLINICA}</div><div style="font-size:11px;opacity:.85;margin-top:3px">{ENDERECO}</div></div></div>
-            <div><span style="background:white;color:#0f3554;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700">DOCUMENTO OFICIAL</span></div>
+            <div class="header-left"><img src="{LOGO_URL}"><div class="header-text"><div class="nome">{NOME_CLINICA}</div><div class="end">{ENDERECO}</div></div></div>
+            <div class="badge">DOCUMENTO OFICIAL</div>
         </div>
         <div class="content">
             <div class="status-box">
-                <div><div style="font-weight:700;color:#2e7d32;font-size:15px">✓ DOCUMENTO AUTENTICADO COM SUCESSO</div><div style="font-size:12px;color:#555;margin-top:4px">Este documento consta em nossa base oficial.</div></div>
-                <div style="text-align:right"><div style="font-size:11px;color:#888">CÓDIGO</div><div style="font-weight:800;font-size:16px;color:#0f3554">{codigo}</div></div>
+                <div><div style="font-weight:700;color:#2e7d32;font-size:14px">✓ DOCUMENTO AUTENTICADO COM SUCESSO</div><div style="font-size:11px;color:#555;margin-top:3px">Este documento consta em nossa base oficial.</div></div>
+                <div style="text-align:right"><div style="font-size:10px;color:#888">CÓDIGO</div><div style="font-weight:800;font-size:16px;color:#0f3554">{codigo}</div></div>
             </div>
-
             <div class="section-title">1. Identificação do Paciente</div>
             <div class="grid">
                 <div class="field full"><span class="l">Nome Completo</span><span class="v">{info.get('paciente','-')}</span></div>
@@ -70,7 +80,6 @@ async def validar(doc: str = ""):
                 <div class="field"><span class="l">Data de Nascimento</span><span class="v">{info.get('nascimento','-')} ({info.get('idade','-')} anos)</span></div>
                 <div class="field"><span class="l">Sexo</span><span class="v">{info.get('sexo','-')}</span></div>
             </div>
-
             <div class="section-title">2. Dados do Atendimento</div>
             <div class="grid">
                 <div class="field"><span class="l">Data do Atendimento</span><span class="v">{info.get('data','-')}</span></div>
@@ -81,24 +90,21 @@ async def validar(doc: str = ""):
                 <div class="field"><span class="l">Período de Afastamento</span><span class="v">{info.get('dias','1')} dia(s) - {info.get('afastamento','-')}</span></div>
                 <div class="field full"><span class="l">Observações</span><span class="v">{info.get('obs','-')}</span></div>
             </div>
-
             <div class="section-title">3. Médico Responsável</div>
             <div class="grid">
                 <div class="field"><span class="l">Nome</span><span class="v">{info.get('medico','-')}</span></div>
                 <div class="field"><span class="l">CRM / UF</span><span class="v">{info.get('crm','-')}</span></div>
                 <div class="field full"><span class="l">Especialidade</span><span class="v">{info.get('especialidade','Clínica Geral')}</span></div>
             </div>
-
             <div class="section-title">4. Validação e Segurança</div>
             <div class="grid">
                 <div class="field"><span class="l">Data de Emissão</span><span class="v">{info.get('emitido','-')}</span></div>
                 <div class="field"><span class="l">Validade da Consulta Online</span><span class="v">Indeterminada</span></div>
                 <div class="field full"><span class="l">Hash de Autenticidade</span><span class="v"><span class="hash">{hash_valid}</span></span></div>
             </div>
-
             <div class="qr-box">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://validacao-atesdado-medico.onrender.com/validar?doc={codigo}" style="border-radius:8px"><br>
-                <div style="margin-top:12px;font-size:12px;color:#555">Escaneie o QR Code para validar novamente<br><b>{codigo}</b> • {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</div>
+                <div style="margin-top:10px;font-size:11px;color:#555">Escaneie o QR Code para validar novamente<br><b>{codigo}</b> • {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</div>
             </div>
         </div>
         <div class="footer">{NOME_CLINICA} • {ENDERECO} • Documento gerado eletronicamente - Lei 14.063/2020</div>
