@@ -1,4 +1,4 @@
 Flask==2.3.3
-qrcode==7.4.2
-Pillow==10.0.1
 gunicorn==21.2.0
+Pillow==10.4.0
+qrcode==8.0
